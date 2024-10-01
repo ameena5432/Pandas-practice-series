@@ -1,6 +1,7 @@
 import configparser
 import pandas as pd
 import matplotlib.pyplot as plt
+import re
 
 # data cleaning function
 def data_cleaning(df):
@@ -20,17 +21,24 @@ def data_cleaning(df):
     return df_cleaned
 
 
-def data_transformation():
+def data_transformation(df, column="col"):
     
     # Transform the Year
-    
+
+    regex_pattern = r"(\(\d{4}-?\d{4}?\)|-\d{4})"
+    df['extracted'] = df[column].str.extract(regex_pattern)
+
+    return df
+
 
 
 def data_analysis(df):
     
     #Movie with highest rating
-    movie_with_highest_rating = df.loc[df['RATING'].idxmax()]['MOVIES']
-    return movie_with_highest_rating
+    highest_rating_row  = df.loc[df['RATING'].idxmax()]
+    movie_with_highest_rating = highest_rating_row['MOVIES']
+    highest_rating_year = highest_rating_row['YEAR']
+    return movie_with_highest_rating , highest_rating_year
 
 
 
@@ -53,8 +61,10 @@ if __name__ == "__main__":
     df_cleaned = data_cleaning(df)
     #print(df_cleaned.head(10))
 
-    movie_with_highest_rating = data_analysis(df_cleaned)
-    print(movie_with_highest_rating)
+    df_cleaned = data_transformation(df, "YEAR")
+
+    movie_with_highest_rating,year = data_analysis(df_cleaned)
+    print(movie_with_highest_rating,year)
 
 
 
